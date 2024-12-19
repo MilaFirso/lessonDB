@@ -22,6 +22,7 @@ private:
 public:
   DataBase(const std::string &connection);
 
+  void dropDatabaseTables();
   void createDatabaseTables();
   void addClient(
     const std::string &name, const std::string &surname,
