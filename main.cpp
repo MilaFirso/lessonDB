@@ -21,6 +21,7 @@ int main()
       "password=Firsova2010";
     DataBase db(connectionString);
 
+    db.dropDatabaseTables();
     db.createDatabaseTables();
 
     db.addClient("Mila", "Milk", "Mila@ma.r", "11892752589");
