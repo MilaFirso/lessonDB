@@ -7,31 +7,20 @@ DataBase::DataBase(const std::string &connection) : connection_{connection}
 
 void DataBase::createDatabaseTables() // Creating a database structure (tables)
 {
-  try
-  {
     pqxx::work txn(connection_);
     txn.exec(
       R"(CREATE TABLE IF NOT EXISTS clients(id SERIAL PRIMARY KEY, name TEXT, surname TEXT, email TEXT UNIQUE);  
             CREATE TABLE IF NOT EXISTS phones(id SERIAL PRIMARY KEY, client_id INT REFERENCES clients(id), phone TEXT UNIQUE);)");
     txn.commit();
     std::cout << "A database structure (tables) created" << std::endl;
-  }
-  catch (const std::exception &ex)
-  {
-    // setlocale(LC_ALL, "Russian");
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
-    std::cerr << "Exception happened: " << ex.what() << std::endl;
-  }
 }
-
+  
 void DataBase::addClient(
   const std::string &name, const std::string &surname,
   const std::string &email,
   const std::string &phone) // Method for adding a new client
 {
-  try
-  {
+  
     pqxx::work txn(connection_);
     connection_.set_client_encoding("UTF8");
     pqxx::result res = txn.exec_params(
@@ -52,14 +41,7 @@ void DataBase::addClient(
       txn.abort();
       std::cerr << "Failed to add client" << std::endl;
     }
-  }
-  catch (const std::exception &ex)
-  {
-    SetConsoleCP(CP_UTF8);
-    SetConsoleOutputCP(CP_UTF8);
-    std::cerr << "Exception happened: " << ex.what() << std::endl;
-  }
-}
+   }
 
 
 
@@ -166,7 +148,7 @@ void DataBase::removeClient(
 
 std::vector<Client> DataBase::findClients(const std::string &query)
 {
-  // Найти клиента по его данным (имени, фамилии, email-у или телефону)
+  // ГЌГ Г©ГІГЁ ГЄГ«ГЁГҐГ­ГІГ  ГЇГ® ГҐГЈГ® Г¤Г Г­Г­Г»Г¬ (ГЁГ¬ГҐГ­ГЁ, ГґГ Г¬ГЁГ«ГЁГЁ, email-Гі ГЁГ«ГЁ ГІГҐГ«ГҐГґГ®Г­Гі)
   std::vector<Client> result;
   pqxx::work txn(connection_);
   pqxx::result res = txn.exec_params(
@@ -196,21 +178,21 @@ void DataBase::show()
 
   pqxx::work txn(connection_);
 
-  // Получаем список таблиц в базе данных
+  // ГЏГ®Г«ГіГ·Г ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ ГІГ ГЎГ«ГЁГ¶ Гў ГЎГ Г§ГҐ Г¤Г Г­Г­Г»Гµ
   pqxx::result tables = txn.exec(
     "SELECT table_name FROM information_schema.tables WHERE "
     "table_schema='public'");
 
-  // Для каждой таблицы выводим все ее данные
+  // Г„Г«Гї ГЄГ Г¦Г¤Г®Г© ГІГ ГЎГ«ГЁГ¶Г» ГўГ»ГўГ®Г¤ГЁГ¬ ГўГ±ГҐ ГҐГҐ Г¤Г Г­Г­Г»ГҐ
   for (auto row : tables)
   {
     std::string table_name = row[0].as<std::string>();
 
-    // Выполняем SELECT-запрос для выборки данных из таблицы
+    // Г‚Г»ГЇГ®Г«Г­ГїГҐГ¬ SELECT-Г§Г ГЇГ°Г®Г± Г¤Г«Гї ГўГ»ГЎГ®Г°ГЄГЁ Г¤Г Г­Г­Г»Гµ ГЁГ§ ГІГ ГЎГ«ГЁГ¶Г»
     std::string query = "SELECT * FROM " + table_name;
     pqxx::result data = txn.exec(query);
 
-    // Выводим данные из таблицы в консоль
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ Г¤Г Г­Г­Г»ГҐ ГЁГ§ ГІГ ГЎГ«ГЁГ¶Г» Гў ГЄГ®Г­Г±Г®Г«Гј
     std::cout << "Table: " << table_name << std::endl;
     for (auto &row : data)
     {
