@@ -5,6 +5,13 @@ DataBase::DataBase(const std::string &connection) : connection_{connection}
   std::cout << "Connected to database successfully!" << std::endl;
 };
 
+void DataBase::dropDatabaseTables()
+{
+  pqxx::work trn(connection_);
+  trn.exec(R"(DROP TABLE IF EXISTS clients, phones;)");
+  trn.commit();
+}
+
 void DataBase::createDatabaseTables() // Creating a database structure (tables)
 {
     pqxx::work txn(connection_);
